@@ -11,39 +11,37 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout do repositório
         uses: actions/checkout@v4
 
-      - name: Setup Node
+      - name: Instalar Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      - name: Instalar Spectral
-        run: npm install -g @stoplight/spectral-cli
-
-      - name: Criar arquivo Spectral
-        run: echo 'extends: spectral:oas' > .spectral.yaml
+      - name: Instalar Redocly CLI
+        run: npm install -g @redocly/cli
 
       - name: Validar OpenAPI
-        run: spectral lint openapi.yaml
+        run: redocly lint openapi.yaml
 
   publicar-docs:
     needs: validar
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout do repositório
         uses: actions/checkout@v4
 
-      - name: Instalar Redoc
-        run: npm install -g redoc-cli
+      - name: Instalar Redocly CLI
+        run: npm install -g @redocly/cli
 
-      - name: Gerar documentação
-        run: redoc-cli build openapi.yaml -o index.html
+      - name: Gerar documentação HTML
+        run: redocly build-docs openapi.yaml -o index.html
 
       - name: Publicar GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: .
+        

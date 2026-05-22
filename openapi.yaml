@@ -1,0 +1,316 @@
+openapi: 3.0.3
+
+info:
+  title: API de Filmes da Marvel
+  description: |
+    API REST dedicada ao Universo Cinematográfico Marvel (MCU).
+    Permite consultar filmes, personagens e fases do MCU.
+  version: 1.0.0
+
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: https://api.filmesmarvel.com/v1
+    description: Servidor principal
+
+security:
+  - bearerAuth: []
+
+tags:
+  - name: Filmes
+    description: Endpoints relacionados aos filmes
+
+  - name: Personagens
+    description: Endpoints relacionados aos personagens
+
+paths:
+
+  /filmes:
+    get:
+      tags:
+        - Filmes
+
+      summary: Listar filmes
+      operationId: listarFilmes
+
+      responses:
+        "200":
+          description: Lista de filmes retornada com sucesso
+
+          content:
+            application/json:
+              schema:
+                type: array
+
+                items:
+                  $ref: "#/components/schemas/Filme"
+
+        "400":
+          description: Requisição inválida
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+
+    post:
+      tags:
+        - Filmes
+
+      summary: Cadastrar filme
+      operationId: cadastrarFilme
+
+      requestBody:
+        required: true
+
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FilmeInput"
+
+      responses:
+        "201":
+          description: Filme cadastrado com sucesso
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Filme"
+
+        "400":
+          description: Dados inválidos
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+
+  /filmes/{id}:
+    get:
+      tags:
+        - Filmes
+
+      summary: Buscar filme por ID
+      operationId: buscarFilmePorId
+
+      parameters:
+        - name: id
+          in: path
+          required: true
+
+          schema:
+            type: integer
+
+      responses:
+        "200":
+          description: Filme encontrado
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Filme"
+
+        "404":
+          description: Filme não encontrado
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+
+  /filmes/{id}/personagens:
+    get:
+      tags:
+        - Filmes
+
+      summary: Listar personagens do filme
+      operationId: listarPersonagensPorFilme
+
+      parameters:
+        - name: id
+          in: path
+          required: true
+
+          schema:
+            type: integer
+
+      responses:
+        "200":
+          description: Lista de personagens retornada com sucesso
+
+          content:
+            application/json:
+              schema:
+                type: array
+
+                items:
+                  $ref: "#/components/schemas/Personagem"
+
+        "404":
+          description: Filme não encontrado
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+
+  /personagens:
+    get:
+      tags:
+        - Personagens
+
+      summary: Listar personagens
+      operationId: listarPersonagens
+
+      responses:
+        "200":
+          description: Lista de personagens retornada com sucesso
+
+          content:
+            application/json:
+              schema:
+                type: array
+
+                items:
+                  $ref: "#/components/schemas/Personagem"
+
+        "400":
+          description: Requisição inválida
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+
+  /personagens/{id}:
+    get:
+      tags:
+        - Personagens
+
+      summary: Buscar personagem por ID
+      operationId: buscarPersonagemPorId
+
+      parameters:
+        - name: id
+          in: path
+          required: true
+
+          schema:
+            type: integer
+
+      responses:
+        "200":
+          description: Personagem encontrado
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Personagem"
+
+        "404":
+          description: Personagem não encontrado
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+
+components:
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+
+    Filme:
+      type: object
+
+      properties:
+        id:
+          type: integer
+          example: 1
+
+        titulo:
+          type: string
+          example: Vingadores Ultimato
+
+        ano_lancamento:
+          type: integer
+          example: 2019
+
+        diretor:
+          type: string
+          example: Anthony Russo
+
+      required:
+        - id
+        - titulo
+        - ano_lancamento
+        - diretor
+
+    FilmeInput:
+      type: object
+
+      properties:
+        titulo:
+          type: string
+          example: Homem-Aranha Sem Volta Para Casa
+
+        ano_lancamento:
+          type: integer
+          example: 2021
+
+        diretor:
+          type: string
+          example: Jon Watts
+
+      required:
+        - titulo
+        - ano_lancamento
+        - diretor
+
+    Personagem:
+      type: object
+
+      properties:
+        id:
+          type: integer
+          example: 1
+
+        nome:
+          type: string
+          example: Homem de Ferro
+
+        ator:
+          type: string
+          example: Robert Downey Jr
+
+        heroi:
+          type: boolean
+          example: true
+
+      required:
+        - id
+        - nome
+        - ator
+
+    Erro:
+      type: object
+
+      properties:
+        codigo:
+          type: integer
+          example: 404
+
+        mensagem:
+          type: string
+          example: Filme não encontrado
+
+      required:
+        - codigo
+        - mensagem

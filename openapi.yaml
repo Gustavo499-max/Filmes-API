@@ -6,6 +6,7 @@ info:
     API REST dedicada ao Universo Cinematográfico Marvel (MCU).
     Permite consultar filmes, personagens e fases do MCU.
   version: 1.0.0
+
   license:
     name: MIT
     url: https://opensource.org/licenses/MIT
@@ -13,6 +14,9 @@ info:
 servers:
   - url: https://api.filmesmarvel.com/v1
     description: Servidor principal
+
+security:
+  - bearerAuth: []
 
 tags:
   - name: Filmes
@@ -27,30 +31,40 @@ paths:
     get:
       tags:
         - Filmes
+
       summary: Listar filmes
       operationId: listarFilmes
 
       responses:
         "200":
           description: Lista de filmes retornada com sucesso
+
           content:
             application/json:
               schema:
                 type: array
+
                 items:
                   $ref: "#/components/schemas/Filme"
 
         "400":
           description: Requisição inválida
 
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+
     post:
       tags:
         - Filmes
+
       summary: Cadastrar filme
       operationId: cadastrarFilme
 
       requestBody:
         required: true
+
         content:
           application/json:
             schema:
@@ -60,13 +74,24 @@ paths:
         "201":
           description: Filme cadastrado com sucesso
 
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Filme"
+
         "400":
           description: Dados inválidos
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
 
   /filmes/{id}:
     get:
       tags:
         - Filmes
+
       summary: Buscar filme por ID
       operationId: buscarFilmePorId
 
@@ -74,6 +99,7 @@ paths:
         - name: id
           in: path
           required: true
+
           schema:
             type: integer
 
@@ -81,13 +107,24 @@ paths:
         "200":
           description: Filme encontrado
 
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Filme"
+
         "404":
           description: Filme não encontrado
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
 
   /filmes/{id}/personagens:
     get:
       tags:
         - Filmes
+
       summary: Listar personagens do filme
       operationId: listarPersonagensPorFilme
 
@@ -95,6 +132,7 @@ paths:
         - name: id
           in: path
           required: true
+
           schema:
             type: integer
 
@@ -102,13 +140,27 @@ paths:
         "200":
           description: Lista de personagens retornada com sucesso
 
+          content:
+            application/json:
+              schema:
+                type: array
+
+                items:
+                  $ref: "#/components/schemas/Personagem"
+
         "404":
           description: Filme não encontrado
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
 
   /personagens:
     get:
       tags:
         - Personagens
+
       summary: Listar personagens
       operationId: listarPersonagens
 
@@ -116,13 +168,27 @@ paths:
         "200":
           description: Lista de personagens retornada com sucesso
 
+          content:
+            application/json:
+              schema:
+                type: array
+
+                items:
+                  $ref: "#/components/schemas/Personagem"
+
         "400":
           description: Requisição inválida
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
 
   /personagens/{id}:
     get:
       tags:
         - Personagens
+
       summary: Buscar personagem por ID
       operationId: buscarPersonagemPorId
 
@@ -130,6 +196,7 @@ paths:
         - name: id
           in: path
           required: true
+
           schema:
             type: integer
 
@@ -137,10 +204,26 @@ paths:
         "200":
           description: Personagem encontrado
 
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Personagem"
+
         "404":
           description: Personagem não encontrado
 
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+
 components:
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
 
   schemas:
 
